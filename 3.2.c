@@ -137,5 +137,35 @@ void FIR_RingIndex_Init (FIR_RingIndex_Handle_t * pHandle, FIR_Config_t * pConfi
     pHandle->Index = 0;
 }
 
+float IIR_GetValueFormII(IIR_Handle_t* pHandle, float sample) {
+    uint32_t n;
+    uint32_t order = pHandle->pCfg->order;
+    float *pCoeffA = pHandle->pCfg->pCoeffA;
+    float *pDelayX = pHandle->pDelayX;
+    float *pCoeffB = pHandle->pCfg->pCoeffB;
+    float *pDelayY = pHandle->pDelayY;
+    float output = 0.0f;
 
+    // Update delay line for input samples
+    for (n = order; n > 0; n--) {
+        pDelayX[n] = pDelayX[n - 1];
+    }
+    pDelayX[0] = sample;
+
+    // Calculate output using Direct Form II structure
+    for (n = 0; n <= order; n++) {
+        output += pDelayX[n] * pCoeffB[n];
+    }
+    for (n = 1; n <= order; n++) {
+        output -= pDelayY[n] * pCoeffA[n];
+    }
+
+    // Update delay line for output samples
+    for (n = order; n > 0; n--) {
+        pDelayY[n] = pDelayY[n - 1];
+    }
+    pDelayY[0] = output;
+
+    return output;
+}
 
