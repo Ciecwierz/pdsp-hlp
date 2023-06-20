@@ -129,5 +129,13 @@ float FOR_RingPointer_GetValue(FIR_RingPointer_Handle_t * pHandle, float sample)
     }
     return output;
 }
+void FIR_RingIndex_Init (FIR_RingIndex_Handle_t * pHandle, FIR_Config_t * pConfig) {
+
+    pHandle->pCfg = pConfig;
+    pHandle->pDelay = (float*)malloc((pConfig->order + 1)* sizeof(float));
+    memset(pHandle->pDelay, 0, (pConfig->order + 1)* sizeof(float));
+    pHandle->Index = 0;
+}
+
 
 
